@@ -24,14 +24,23 @@ func _make_library(args : Array) -> void:
 		
 		var anim_track_idx : int = animation.add_track(Animation.TYPE_VALUE)
 		animation.track_set_path(anim_track_idx, ".:animation")
-		animation.value_track_set_update_mode(anim_track_idx, Animation.UPDATE_DISCRETE)
-		animation.track_insert_key(anim_track_idx, 0, anim_name)
+		animation.value_track_set_update_mode(anim_track_idx, Animation.UPDATE_CONTINUOUS)
+		var anim_track_key_idx : int = animation.track_insert_key(anim_track_idx, 0, anim_name)
+		animation.track_set_key_transition(anim_track_idx, anim_track_key_idx, 0.0)
 		
 		var frame_track_idx : int = animation.add_track(Animation.TYPE_VALUE)
 		animation.track_set_path(frame_track_idx, ".:frame")
-		animation.value_track_set_update_mode(frame_track_idx, Animation.UPDATE_DISCRETE)
+		animation.value_track_set_update_mode(frame_track_idx, Animation.UPDATE_CONTINUOUS)
+		var last_frame : Texture2D
 		for i in frames.get_frame_count(anim_name):
-			animation.track_insert_key(frame_track_idx, i * animation.step, i)
+			var cur_tex : Texture2D = frames.get_frame_texture(anim_name, i)
+			if cur_tex == last_frame:
+				continue
+			
+			var frame_track_key_idx : int = animation.track_insert_key(frame_track_idx, i * animation.step, i)
+			animation.track_set_key_transition(frame_track_idx, frame_track_key_idx, 0.0)
+			
+			last_frame = cur_tex
 		
 		library.add_animation(anim_name, animation)
 	
