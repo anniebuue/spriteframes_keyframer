@@ -1,5 +1,6 @@
 @tool
 extends EditorContextMenuPlugin
+class_name SpriteFramesKeyframer
 
 func _popup_menu(paths : PackedStringArray) -> void:
 	var proceed : bool = false
@@ -13,7 +14,7 @@ func _popup_menu(paths : PackedStringArray) -> void:
 	var library_icon:Texture2D = EditorInterface.get_editor_theme().get_icon(&"AnimationLibrary",&"EditorIcons")
 	add_context_menu_item("Make AnimationLibrary", _make_library, library_icon)
 
-func _make_library(args : Array) -> void:
+static func _make_library(args : Array) -> void:
 	var path : String = args[0]
 	var frames : SpriteFrames = ResourceLoader.load(path)
 	
