@@ -23,6 +23,9 @@ static func _make_library(args : Array) -> void:
 		var animation : Animation = Animation.new()
 		animation.step = 1.0 / frames.get_animation_speed(anim_name)
 		
+		# temporary until frame duration usage is fixed
+		animation.length = animation.step * frames.get_frame_count(anim_name)
+		
 		var anim_track_idx : int = animation.add_track(Animation.TYPE_VALUE)
 		animation.track_set_path(anim_track_idx, ".:animation")
 		animation.value_track_set_update_mode(anim_track_idx, Animation.UPDATE_CONTINUOUS)
@@ -35,24 +38,25 @@ static func _make_library(args : Array) -> void:
 		animation.value_track_set_update_mode(frame_track_idx, Animation.UPDATE_CONTINUOUS)
 		animation.track_set_interpolation_type(frame_track_idx, Animation.INTERPOLATION_NEAREST)
 		var last_frame_texture : Texture2D
-		var last_frame_duration : float
-		var total_frames_duration : float
+		#var last_frame_duration : float
+		#var total_frames_duration : float
 		for i in frames.get_frame_count(anim_name):
 			var cur_tex : Texture2D = frames.get_frame_texture(anim_name, i)
 			if cur_tex == last_frame_texture:
 				continue
 			
-			var frame_pos : float = (i * last_frame_duration) * animation.step
-			var frame_track_key_idx : int = animation.track_insert_key(frame_track_idx, frame_pos, i)
+			#var frame_pos : float = (i * last_frame_duration) * animation.step
+			#var frame_track_key_idx : int = animation.track_insert_key(frame_track_idx, frame_pos, i)
+			var frame_track_key_idx : int = animation.track_insert_key(frame_track_idx, i * animation.step, i)
 			animation.track_set_key_transition(frame_track_idx, frame_track_key_idx, 0.0)
 			
 			last_frame_texture = cur_tex
 			
-			var frame_duration : float = frames.get_frame_duration(anim_name, i)
-			last_frame_duration = frame_duration
-			total_frames_duration += frames.get_frame_duration(anim_name, i)
-		
-		animation.length = animation.step * total_frames_duration
+			#var frame_duration : float = frames.get_frame_duration(anim_name, i)
+			#last_frame_duration = frame_duration
+			#total_frames_duration += frames.get_frame_duration(anim_name, i)
+		#
+		#animation.length = animation.step * total_frames_duration
 		library.add_animation(anim_name, animation)
 	
 	var directory : String = path.get_base_dir()
